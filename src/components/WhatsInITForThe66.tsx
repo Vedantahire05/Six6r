@@ -192,9 +192,9 @@ export default function WhatsInItForThe66({
   }
 
   return (
-    <section className="relative flex min-h-screen w-full flex-col items-center bg-black px-6 pb-16 pt-40 sm:px-10">
+    <section className="relative flex h-[100dvh] w-full flex-col items-center justify-center gap-6 overflow-hidden bg-black px-6 pt-20 pb-6 sm:px-10 sm:pt-24">
       {/* Section heading */}
-      <h2 className="w-full max-w-md text-center text-4xl font-extrabold uppercase leading-[1.05] text-white sm:text-5xl">
+      <h2 className="w-full max-w-md flex-none text-center text-2xl font-extrabold uppercase leading-[1.15] text-white sm:text-4xl">
         What's in it
         <br />
         for the <span className="text-[#3E86FF]">66?</span>
@@ -202,10 +202,10 @@ export default function WhatsInItForThe66({
 
       {/* Card stack */}
       <div
-        className="relative mt-16 w-full max-w-md"
+        className="relative w-full max-w-xs flex-1 sm:max-w-sm"
         style={{ touchAction: "pan-y" }}
       >
-        <div className="relative aspect-[4/5] w-full">
+        <div className="relative h-full max-h-[46vh] w-full sm:max-h-[50vh]">
           {/* Decorative stacked outlines behind the active card */}
           <div className="absolute inset-0 translate-x-3 translate-y-3 rotate-2 rounded-2xl border border-[#3E86FF]/30" />
           <div className="absolute inset-0 -translate-x-2 translate-y-5 -rotate-1 rounded-2xl border border-[#3E86FF]/50" />
@@ -220,22 +220,22 @@ export default function WhatsInItForThe66({
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
             onPointerCancel={handlePointerUp}
-            className="absolute inset-0 flex cursor-grab select-none flex-col justify-between overflow-hidden rounded-2xl border-2 border-[#3E86FF] bg-[#050B18] p-6 active:cursor-grabbing sm:p-7"
+            className="absolute inset-0 flex cursor-grab select-none flex-col justify-between overflow-hidden rounded-2xl border-2 border-[#3E86FF] bg-[#050B18] p-4 active:cursor-grabbing sm:p-6"
             style={{ transform, opacity, transition }}
           >
             <div>
-              <span className="block text-lg font-extrabold text-[#3E86FF]">
+              <span className="block text-base font-extrabold text-[#3E86FF]">
                 {card.number}
               </span>
-              <span className="mt-1 block h-[3px] w-6 bg-[#3E86FF]" />
+              <span className="mt-1 block h-[3px] w-5 bg-[#3E86FF]" />
 
-              <h3 className="mt-5 text-2xl font-extrabold uppercase leading-tight text-white sm:text-3xl">
+              <h3 className="mt-3 text-lg font-extrabold uppercase leading-tight text-white sm:text-2xl">
                 {card.heading[0]}
                 <br />
                 {card.heading[1]}
               </h3>
 
-              <p className="mt-4 max-w-[62%] text-sm font-medium leading-relaxed text-white/90 sm:text-base">
+              <p className="mt-2 max-w-[60%] text-xs font-medium leading-snug text-white/90 sm:text-sm">
                 {card.description}
               </p>
             </div>
@@ -244,14 +244,14 @@ export default function WhatsInItForThe66({
               src={card.image}
               alt={card.imageAlt}
               draggable={false}
-              className="pointer-events-none absolute bottom-4 right-2 h-auto max-h-[55%] w-[42%] object-contain drop-shadow-2xl"
+              className="pointer-events-none absolute bottom-3 right-2 h-auto max-h-[50%] w-[40%] object-contain drop-shadow-2xl"
             />
           </div>
         </div>
       </div>
 
       {/* Swipe controls */}
-      <div className="mt-10 flex flex-col items-center gap-3">
+      <div className="flex flex-none flex-col items-center gap-2">
         <span className="text-sm font-bold uppercase tracking-[0.2em] text-[#3E86FF]">
           Swipe to explore
         </span>
