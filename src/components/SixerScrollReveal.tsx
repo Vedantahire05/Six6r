@@ -10,6 +10,12 @@ import { useEffect, useRef, useState, useCallback } from "react";
  *
  * Images live in /public, so they're referenced as root-relative string
  * paths (Vite serves public/ at "/") rather than imported as modules.
+ *
+ * SCROLL LENGTH: each step used to take a full 100vh of scroll (500vh
+ * total for 5 steps), which reads as sluggish on mobile — you scroll for
+ * ages before anything visibly changes. VH_PER_STEP is now smaller, and
+ * even smaller on narrow/mobile viewports, so the whole reveal completes
+ * in noticeably less scrolling and each line change feels snappier.
  */
 
 type ColorKey = "blue" | "green" | "orange";
@@ -65,8 +71,13 @@ const COLORS: Record<ColorKey, ColorConfig> = {
   },
 };
 
-// How many viewport-heights of scroll each step gets. Higher = slower reveal.
-const VH_PER_STEP = 1;
+// How many viewport-heights of scroll each step gets. Higher = slower
+// reveal, lower = snappier/shorter scroll. Mobile gets a shorter value
+// since a long scroll-jack section feels much more sluggish on a phone
+// (smaller viewport, slower/inconsistent scroll deltas) than on desktop.
+const VH_PER_STEP_DESKTOP = 0.7;
+const VH_PER_STEP_MOBILE = 0.4;
+const MOBILE_BREAKPOINT_PX = 768;
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
@@ -76,7 +87,23 @@ export default function App() {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeStep, setActiveStep] = useState(0);
   const [stepProgress, setStepProgress] = useState(0); // 0..1 within active step
+  const [vhPerStep, setVhPerStep] = useState(VH_PER_STEP_DESKTOP);
   const tickingRef = useRef(false);
+
+  // Pick a shorter per-step scroll distance on narrow/mobile viewports.
+  useEffect(() => {
+    const updateVhPerStep = () => {
+      setVhPerStep(
+        window.innerWidth < MOBILE_BREAKPOINT_PX
+          ? VH_PER_STEP_MOBILE
+          : VH_PER_STEP_DESKTOP
+      );
+    };
+
+    updateVhPerStep();
+    window.addEventListener("resize", updateVhPerStep);
+    return () => window.removeEventListener("resize", updateVhPerStep);
+  }, []);
 
   const handleScroll = useCallback(() => {
     if (tickingRef.current) return;
@@ -109,13 +136,20 @@ export default function App() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
+  // Re-measure once vhPerStep changes the section's actual height, so the
+  // active step/progress stay correct instead of waiting for the next
+  // scroll event to catch up.
+  useEffect(() => {
+    handleScroll();
+  }, [vhPerStep, handleScroll]);
+
   const activeCan = STEPS[activeStep].can;
 
   return (
     <section
       ref={sectionRef}
       className="relative w-full bg-black"
-      style={{ height: `${STEPS.length * VH_PER_STEP * 100}vh` }}
+      style={{ height: `${STEPS.length * vhPerStep * 100}vh` }}
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* ---- Can art, crossfading between the three colorways ---- */}
